@@ -1,0 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROBLEMA SA MGA INDECISIVE</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ocean:     #0c4a6e;
+    --ocean-mid: #075985;
+    --sky:       #0284c7;
+    --sky-mid:   #0ea5e9;
+    --light:     #bae6fd;
+    --pale:      #e0f2fe;
+    --white:     #ffffff;
+    --gray-50:   #f8fafc;
+    --gray-100:  #f1f5f9;
+    --gray-200:  #e2e8f0;
+    --gray-400:  #94a3b8;
+    --gray-500:  #64748b;
+    --gray-700:  #334155;
+    --gray-900:  #0f172a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--white);
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--gray-200);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2.5rem;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--ocean);
+  }
+  .header-step {
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+  }
+
+  /* ── PROGRESS ── */
+  .progress-track {
+    position: fixed;
+    top: 60px; left: 0; right: 0;
+    z-index: 99;
+    height: 2px;
+    background: var(--gray-200);
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--sky);
+    transition: width 0.45s ease;
+  }
+
+  /* ── PAGE WRAP ── */
+  .page {
+    padding-top: 100px;
+    padding-bottom: 5rem;
+    min-height: 100vh;
+  }
+
+  /* ── SCREEN ── */
+  .screen {
+    display: none;
+    animation: fadein 0.4s ease;
+  }
+  .screen.active { display: block; }
+  @keyframes fadein {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION TITLE BLOCK (like FNF) ── */
+  .section-head {
+    text-align: center;
+    padding: 2rem 1rem 2.5rem;
+  }
+  .section-eyebrow {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--sky);
+    margin-bottom: 0.5rem;
+  }
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(32px, 6vw, 52px);
+    font-weight: 300;
+    color: var(--ocean);
+    letter-spacing: -0.5px;
+    line-height: 1.1;
+  }
+  .section-sub {
+    font-size: 13px;
+    font-weight: 300;
+    color: var(--gray-400);
+    margin-top: 0.6rem;
+    font-style: italic;
+  }
+
+  /* ── TAB NAV (like FNF) ── */
+  .tab-nav {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    border-bottom: 1px solid var(--gray-200);
+    margin-bottom: 3rem;
+  }
+  .tab-item {
+    padding: 12px 28px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    cursor: default;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .tab-item.active {
+    color: var(--ocean);
+    border-bottom-color: var(--sky);
+  }
+
+  /* ── TIME GRID ── */
+  .time-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    justify-content: center;
+  }
+  .time-card {
+    flex: 1;
+    min-width: 110px;
+    max-width: 160px;
+    aspect-ratio: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.22s;
+    background: var(--white);
+  }
+  .time-card:hover {
+    border-color: var(--sky);
+    background: var(--pale);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(2,132,199,0.1);
+  }
+  .time-card .t-label {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 26px;
+    font-weight: 300;
+    color: var(--ocean);
+  }
+  .time-card .t-sub {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+  }
+
+  /* ── CARD GRID (FNF-style portrait grid) ── */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  .place-card {
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: var(--gray-100);
+    aspect-ratio: 3/4;
+  }
+
+  /* ── IMAGE FILL (FNF style) ── */
+  .place-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.5s ease;
+    filter: brightness(0.88) saturate(0.9);
+  }
+  .place-card:hover img {
+    transform: scale(1.06);
+    filter: brightness(0.75) saturate(1.1);
+  }
+
+  /* Placeholder when no image */
+  .img-ph {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(160deg, var(--pale) 0%, var(--gray-100) 100%);
+    color: var(--gray-400);
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .img-ph svg { width: 32px; height: 32px; opacity: 0.3; }
+  .img-ph .ph-emoji { font-size: 72px; line-height: 1; }
+
+  /* Overlay name at bottom (FNF style) */
+  .card-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 2.5rem 1.4rem 1.4rem;
+    background: linear-gradient(to top, rgba(8,47,73,0.88) 0%, transparent 100%);
+    transition: background 0.3s;
+  }
+  .place-card:hover .card-overlay {
+    background: linear-gradient(to top, rgba(2,68,109,0.95) 0%, transparent 100%);
+  }
+  .card-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-weight: 300;
+    color: var(--white);
+    letter-spacing: 1px;
+    line-height: 1.2;
+  }
+  .card-tag {
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--light);
+    margin-bottom: 6px;
+    opacity: 0.75;
+  }
+
+  /* None card special style */
+  .none-style {
+    background: var(--gray-50);
+    border: 1px dashed var(--gray-200);
+    aspect-ratio: 3/4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .none-style:hover {
+    background: var(--pale);
+    border-color: var(--sky-mid);
+  }
+  .none-style span {
+    font-size: 13px;
+    color: var(--gray-400);
+    letter-spacing: 1px;
+  }
+
+  /* ── BACK ── */
+  .back-wrap {
+    max-width: 1200px;
+    margin: 2rem auto 0;
+    padding: 0 1.5rem;
+  }
+  .back-btn {
+    background: none;
+    border: none;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--gray-400);
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    transition: color 0.15s;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .back-btn:hover { color: var(--sky); }
+
+  /* ── RECEIPT SCREEN ── */
+  .receipt-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+  }
+  #receipt-canvas-wrap {
+    width: 100%;
+    border: 1px solid var(--gray-200);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 40px rgba(2,132,199,0.08);
+  }
+  #receipt-canvas { width: 100%; height: auto; display: block; }
+
+  .btn-row { display: flex; gap: 12px; }
+  .dl-btn {
+    flex: 1;
+    background: var(--ocean);
+    color: var(--white);
+    border: none;
+    border-radius: 4px;
+    padding: 15px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    transition: background 0.18s;
+  }
+  .dl-btn:hover { background: var(--ocean-mid); }
+  .dl-btn.ghost {
+    background: var(--white);
+    color: var(--gray-500);
+    border: 1px solid var(--gray-200);
+  }
+  .dl-btn.ghost:hover { background: var(--gray-50); color: var(--gray-700); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">PROBLEMA SA MGA INDECISIVE</div>
+  <div class="header-step" id="hdr-step">Step 1 of 4</div>
+</header>
+<div class="progress-track">
+  <div class="progress-fill" id="prog" style="width:25%"></div>
+</div>
+
+<div class="page">
+
+  <!-- ── SCREEN 1: TIME ── -->
+  <div class="screen active" id="s-time">
+    <div class="section-head">
+      <div class="section-eyebrow">Step 01</div>
+      <div class="section-title">What time tomorrow?</div>
+      <div class="section-sub">Pick a time. Any time. Just pick one.</div>
+    </div>
+    <div class="tab-nav">
+      <div class="tab-item active">Time</div>
+      <div class="tab-item">Destination</div>
+      <div class="tab-item">Place</div>
+      <div class="tab-item">Next</div>
+    </div>
+    <div class="time-wrap">
+      <div class="time-card" onclick="pick('time','10 AM')">
+        <span class="t-label">10</span>
+        <span class="t-sub">AM</span>
+      </div>
+      <div class="time-card" onclick="pick('time','11 AM')">
+        <span class="t-label">11</span>
+        <span class="t-sub">AM</span>
+      </div>
+      <div class="time-card" onclick="pick('time','12 PM')">
+        <span class="t-label">12</span>
+        <span class="t-sub">PM</span>
+      </div>
+      <div class="time-card" onclick="pick('time','1 PM')">
+        <span class="t-label">1</span>
+        <span class="t-sub">PM</span>
+      </div>
+      <div class="time-card" onclick="pick('time','2 PM')">
+        <span class="t-label">2</span>
+        <span class="t-sub">PM</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 2: DESTINATION ── -->
+  <div class="screen" id="s-dest">
+    <div class="section-head">
+      <div class="section-eyebrow">Step 02</div>
+      <div class="section-title">Where do you want to go first?</div>
+      <div class="section-sub">There are only 3 options. You can do this.</div>
+    </div>
+    <div class="tab-nav">
+      <div class="tab-item">Time</div>
+      <div class="tab-item active">Destination</div>
+      <div class="tab-item">Place</div>
+      <div class="tab-item">Next</div>
+    </div>
+    <div class="card-grid">
+
+      <!-- Coffee Shop -->
+      <!-- TO ADD IMAGE: set src attribute below, e.g. src="cafe.jpg" -->
+      <div class="place-card" onclick="pick('dest','Coffee Shop / Café')">
+        <img src="cafe.jpg" alt="" id="img-cafe" onerror="handleImgErr(this)">
+        <div class="img-ph" id="ph-cafe">
+          <span class="ph-emoji">☕</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Destination</div>
+          <div class="card-name">Coffee Shop<br>/ Café</div>
+        </div>
+      </div>
+
+      <!-- Mall -->
+      <!-- TO ADD IMAGE: set src attribute below -->
+      <div class="place-card" onclick="pick('dest','Mall')">
+        <img src="mall.jpg" alt="" id="img-mall" onerror="handleImgErr(this)">
+        <div class="img-ph" id="ph-mall">
+          <span class="ph-emoji">🏬</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Destination</div>
+          <div class="card-name">Mall</div>
+        </div>
+      </div>
+
+      <!-- Fastfood -->
+      <!-- TO ADD IMAGE: set src attribute below -->
+      <div class="place-card" onclick="pick('dest','Fastfood')">
+        <img src="fastfood.jpg" alt="" id="img-ff" onerror="handleImgErr(this)">
+        <div class="img-ph" id="ph-ff">
+          <span class="ph-emoji">🍔</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Destination</div>
+          <div class="card-name">Fastfood</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="back-wrap">
+      <button class="back-btn" onclick="goBack('s-time')">&#8592; Back</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 3: SPECIFIC PLACE (dynamic) ── -->
+  <div class="screen" id="s-place">
+    <div class="section-head">
+      <div class="section-eyebrow">Step 03</div>
+      <div class="section-title" id="place-q">Which specific one?</div>
+      <div class="section-sub">Close your eyes and tap if you have to.</div>
+    </div>
+    <div class="tab-nav">
+      <div class="tab-item">Time</div>
+      <div class="tab-item">Destination</div>
+      <div class="tab-item active">Place</div>
+      <div class="tab-item">Next</div>
+    </div>
+    <div class="card-grid" id="place-grid"></div>
+    <div class="back-wrap">
+      <button class="back-btn" onclick="goBack('s-dest')">&#8592; Back</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 4: NEXT ACTIVITY ── -->
+  <div class="screen" id="s-next">
+    <div class="section-head">
+      <div class="section-eyebrow">Step 04</div>
+      <div class="section-title">What do you want to do next?</div>
+      <div class="section-sub">Last question. We're almost done.</div>
+    </div>
+    <div class="tab-nav">
+      <div class="tab-item">Time</div>
+      <div class="tab-item">Destination</div>
+      <div class="tab-item">Place</div>
+      <div class="tab-item active">Next</div>
+    </div>
+    <div class="card-grid">
+
+      <!-- Eat again -->
+      <!-- TO ADD IMAGE: set src attribute below -->
+      <div class="place-card" onclick="pick('next','Eat again')">
+        <img src="eat.jpg" alt="" onerror="handleImgErr(this)">
+        <div class="img-ph">
+          <span class="ph-emoji">🍽️</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Activity</div>
+          <div class="card-name">Eat again</div>
+        </div>
+      </div>
+
+      <!-- Museum -->
+      <!-- TO ADD IMAGE: set src attribute below -->
+      <div class="place-card" onclick="pick('next','Go to museum')">
+        <img src="museum.jpg" alt="" onerror="handleImgErr(this)">
+        <div class="img-ph">
+          <span class="ph-emoji">🏛️</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Activity</div>
+          <div class="card-name">Go to museum</div>
+        </div>
+      </div>
+
+      <!-- Go home -->
+      <!-- TO ADD IMAGE: set src attribute below -->
+      <div class="place-card" onclick="pick('next','Go home')">
+        <img src="home.png" alt="" onerror="handleImgErr(this)">
+        <div class="img-ph">
+          <span class="ph-emoji">🏠</span>
+        </div>
+        <div class="card-overlay">
+          <div class="card-tag">Activity</div>
+          <div class="card-name">Go home</div>
+        </div>
+      </div>
+
+    </div>
+    <div class="back-wrap">
+      <button class="back-btn" onclick="goBack('s-place')">&#8592; Back</button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 5: RECEIPT ── -->
+  <div class="screen" id="s-receipt">
+    <div class="section-head">
+      <div class="section-eyebrow">Done</div>
+      <div class="section-title">Your hangout plan.</div>
+      <div class="section-sub">It took a while but we got there.</div>
+    </div>
+    <div class="receipt-page">
+      <div id="receipt-canvas-wrap">
+        <canvas id="receipt-canvas"></canvas>
+      </div>
+      <div class="btn-row">
+        <button class="dl-btn" onclick="downloadReceipt()">Download as Image</button>
+        <button class="dl-btn ghost" onclick="restart()">Start over</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+const choices = { time:'', dest:'', place:'', next:'' };
+
+/* =====================================================
+   PLACE OPTIONS
+   Add your own image paths in the img field.
+   e.g.   img: 'images/minori.jpg'
+   ===================================================== */
+const placeOptions = {
+  'Coffee Shop / Café': [
+    { label:'Minori Matcha',     tag:'Café', img:'minori.jpg' },
+    { label:'Driz Cafe',         tag:'Café', img:'driz.jpg' },
+    { label:'Paramount',         tag:'Café', img:'paramount.jpg' },
+    { label:'Tapsi Korner',      tag:'Café', img:'tapsi.jpg' },
+    { label:'None of the above', tag:'',     img:'', none:true }
+  ],
+  'Fastfood': [
+    { label:'Jollibee',    tag:'Fastfood', img:'jollibee.jpg' },
+    { label:'Chowking',    tag:'Fastfood', img:'chowking.avif' },
+    { label:'Mang Inasal', tag:'Fastfood', img:'mang inasal.jpg' }
+  ],
+  'Mall': [
+    { label:'Gaisano', tag:'Mall', img:'gaisano.jpg' },
+    { label:'SM',      tag:'Mall', img:'sm.jpg' }
+  ]
+};
+
+const destLabels = {
+  'Coffee Shop / Café': 'Which café?',
+  'Fastfood':           'Which fastfood place?',
+  'Mall':               'Which mall?'
+};
+
+const steps = ['s-time','s-dest','s-place','s-next','s-receipt'];
+const stepNames = ['Step 1 of 4','Step 2 of 4','Step 3 of 4','Step 4 of 4','Receipt'];
+const progPct = ['25%','50%','65%','80%','100%'];
+
+const funLines = [
+  'proof that two indecisive people can make at least one decision.',
+  'this took way longer than it needed to.',
+  'official plan — subject to change in 5 minutes.',
+  'congratulations on finally agreeing on something.',
+  'achievement unlocked: made a decision.',
+  'valid for one hangout. no take-backs.'
+];
+
+function handleImgErr(img) {
+  img.style.display = 'none';
+  const ph = img.nextElementSibling;
+  if (ph && ph.classList.contains('img-ph')) ph.style.display = 'flex';
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  const idx = steps.indexOf(id);
+  document.getElementById('hdr-step').textContent = stepNames[idx] || '';
+  document.getElementById('prog').style.width = progPct[idx] || '100%';
+  window.scrollTo({ top:0, behavior:'smooth' });
+}
+
+function pick(key, val) {
+  choices[key] = val;
+  if (key==='time')  showScreen('s-dest');
+  else if (key==='dest')  { buildPlaceGrid(val); showScreen('s-place'); }
+  else if (key==='place') showScreen('s-next');
+  else if (key==='next')  { buildCanvas(); showScreen('s-receipt'); }
+}
+
+function goBack(to) { showScreen(to); }
+
+function buildPlaceGrid(dest) {
+  const opts = placeOptions[dest] || [];
+  const grid = document.getElementById('place-grid');
+  grid.innerHTML = '';
+  document.getElementById('place-q').textContent = destLabels[dest] || 'Which one?';
+
+  opts.forEach(o => {
+    if (o.none) {
+      const el = document.createElement('div');
+      el.className = 'none-style';
+      el.innerHTML = `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><span>None of the above</span>`;
+      el.onclick = () => pick('place', o.label);
+      grid.appendChild(el);
+      return;
+    }
+    const card = document.createElement('div');
+    card.className = 'place-card';
+
+    const img = document.createElement('img');
+    img.alt = o.label;
+    const ph = document.createElement('div');
+    ph.className = 'img-ph';
+    ph.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8h18M8 3v5"/></svg>add image`;
+    if (o.img) {
+      img.src = o.img;
+      img.onerror = () => { img.style.display='none'; ph.style.display='flex'; };
+      ph.style.display = 'none';
+    } else {
+      img.style.display = 'none';
+      ph.style.display = 'flex';
+    }
+
+    const overlay = document.createElement('div');
+    overlay.className = 'card-overlay';
+    overlay.innerHTML = `<div class="card-tag">${o.tag}</div><div class="card-name">${o.label}</div>`;
+
+    card.appendChild(img);
+    card.appendChild(ph);
+    card.appendChild(overlay);
+    card.onclick = () => pick('place', o.label);
+    grid.appendChild(card);
+  });
+}
+
+/* ── RECEIPT CANVAS ── */
+function buildCanvas() {
+  const canvas = document.getElementById('receipt-canvas');
+  const W = 700, H = 820;
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+
+  // Background: white
+  ctx.fillStyle = '#ffffff';
+  ctx.fillRect(0, 0, W, H);
+
+  // Ocean top bar
+  ctx.fillStyle = '#0c4a6e';
+  ctx.fillRect(0, 0, W, 6);
+
+  // Sky thin stripe
+  ctx.fillStyle = '#0ea5e9';
+  ctx.fillRect(0, 6, W, 2);
+
+  // Header area
+  ctx.fillStyle = '#f8fafc';
+  ctx.fillRect(0, 8, W, 110);
+  ctx.strokeStyle = '#e2e8f0';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(0, 118); ctx.lineTo(W, 118); ctx.stroke();
+
+  // "HANGOUT RECEIPT" — eyebrow
+  ctx.fillStyle = '#0284c7';
+  ctx.font = '600 10px Inter, sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('HANGOUT RECEIPT', 56, 46);
+
+  // Date top right
+  const dateStr = new Date().toLocaleDateString('en-PH', { month:'short', day:'numeric', year:'numeric' }).toUpperCase();
+  ctx.fillStyle = '#94a3b8';
+  ctx.font = '400 11px Inter, sans-serif';
+  ctx.textAlign = 'right';
+  ctx.fillText(dateStr, W - 56, 46);
+
+  // Big serif title
+  ctx.fillStyle = '#0c4a6e';
+  ctx.font = '300 38px "Cormorant Garamond", Georgia, serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('PROBLEMA SA MGA INDECISIVE', 56, 96);
+
+  // Rows
+  const rows = [
+    { label:'MEET-UP TIME',   value: choices.time  },
+    { label:'FIRST STOP',     value: choices.dest  },
+    { label:'SPECIFIC PLACE', value: choices.place },
+    { label:'NEXT ACTIVITY',  value: choices.next  }
+  ];
+
+  let y = 150;
+  rows.forEach((row, i) => {
+    const rowH = 148;
+    const isEven = i % 2 === 0;
+
+    // Row bg alternating
+    ctx.fillStyle = isEven ? '#f8fafc' : '#ffffff';
+    ctx.fillRect(0, y, W, rowH);
+
+    // Left accent bar
+    ctx.fillStyle = '#0ea5e9';
+    ctx.fillRect(0, y, 3, rowH);
+
+    // Row number
+    ctx.fillStyle = '#bae6fd';
+    ctx.font = '600 11px Inter, sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('0' + (i + 1), 22, y + 38);
+
+    // Label
+    ctx.fillStyle = '#94a3b8';
+    ctx.font = '500 10px Inter, sans-serif';
+    ctx.fillText(row.label, 56, y + 42);
+
+    // Value
+    ctx.fillStyle = '#0c4a6e';
+    ctx.font = '300 34px "Cormorant Garamond", Georgia, serif';
+    ctx.fillText(row.value, 56, y + 108);
+
+    // Divider
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(0, y + rowH); ctx.lineTo(W, y + rowH); ctx.stroke();
+
+    y += rowH;
+  });
+
+  // Footer area
+  ctx.fillStyle = '#f0f9ff';
+  ctx.fillRect(0, y, W, H - y - 8);
+
+  // Dashed divider
+  ctx.strokeStyle = '#bae6fd';
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 5]);
+  ctx.beginPath(); ctx.moveTo(56, y + 24); ctx.lineTo(W - 56, y + 24); ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Fun line
+  const funLine = funLines[Math.floor(Math.random() * funLines.length)];
+  ctx.fillStyle = '#64748b';
+  ctx.font = 'italic 14px "Cormorant Garamond", Georgia, serif';
+  ctx.textAlign = 'center';
+  wrapText(ctx, funLine, W / 2, y + 56, W - 112, 22);
+
+  // Bottom bar
+  ctx.fillStyle = '#0c4a6e';
+  ctx.fillRect(0, H - 8, W, 8);
+  ctx.fillStyle = '#0ea5e9';
+  ctx.fillRect(0, H - 8, W, 2);
+}
+
+function wrapText(ctx, text, x, y, maxW, lh) {
+  const words = text.split(' ');
+  let line = '', lines = [];
+  for (let w of words) {
+    const t = line + w + ' ';
+    if (ctx.measureText(t).width > maxW && line) { lines.push(line.trim()); line = w + ' '; }
+    else line = t;
+  }
+  lines.push(line.trim());
+  const startY = y - ((lines.length - 1) * lh) / 2;
+  lines.forEach((l, i) => ctx.fillText(l, x, startY + i * lh));
+}
+
+function downloadReceipt() {
+  const a = document.createElement('a');
+  a.download = 'hangout-receipt.png';
+  a.href = document.getElementById('receipt-canvas').toDataURL('image/png');
+  a.click();
+}
+
+function restart() {
+  choices.time=''; choices.dest=''; choices.place=''; choices.next='';
+  showScreen('s-time');
+}
+
+// Init: hide all img tags with empty src on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.place-card img').forEach(img => {
+    if (!img.src || img.src === window.location.href) {
+      img.style.display = 'none';
+      const ph = img.nextElementSibling;
+      if (ph && ph.classList.contains('img-ph')) ph.style.display = 'flex';
+    }
+  });
+});
+</script>
+</body>
+</html>
